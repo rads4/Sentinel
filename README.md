@@ -1,6 +1,5 @@
-# PhishGuard — Phishing Detection with Explainable AI
-
-> MCA Major Project · Radhika Awasthi · Guide: Prof. Dr. Himanshu Gupta
+# Sentinel
+Explainable AI Based Phishing Website Detection System
 
 A production-grade phishing website detection application built with
 Random Forest, SHAP explainability, and a clean Flask web interface.
@@ -10,7 +9,8 @@ Designed for viva demonstration, GitHub portfolio, and free-tier cloud deploymen
 
 ## Live Demo
 
-Deploy on Render (see [Deployment](#deployment)) or run locally in 3 steps.
+Live Application:
+https://web-production-31aa7.up.railway.app
 
 ---
 
@@ -39,8 +39,8 @@ Deploy on Render (see [Deployment](#deployment)) or run locally in 3 steps.
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/phishguard.git
-cd phishguard
+git clone https://github.com/YOUR_USERNAME/Sentinel.git
+cd Sentinel
 ```
 
 ### 2. Install dependencies
@@ -85,7 +85,7 @@ Open [http://localhost:5000](http://localhost:5000) in your browser.
 ## Project Structure
 
 ```
-phishguard/
+Sentinel/
 │
 ├── app.py                     # Flask application — all routes
 │
@@ -236,17 +236,6 @@ page crawling infrastructure.
 
 ---
 
-## Research Paper
-
-**Title:** A Model for Phishing Website Detection using Explainable AI Techniques  
-**Student:** Radhika Awasthi  
-**Program:** Master of Computer Applications (MCA)  
-**Guide:** Prof. Dr. Himanshu Gupta  
-**Dataset:** UCI Phishing Websites Dataset (11,055 samples, 30 features)  
-**Explainability Method:** SHAP (SHapley Additive exPlanations)
-
----
-
 ## Tech Stack
 
 - **Backend:** Python 3.12, Flask 3.0
@@ -262,7 +251,7 @@ page crawling infrastructure.
 
 ## Disclaimer
 
-PhishGuard is an academic project built for demonstration purposes.
+Sentinel is an academic project built for demonstration purposes.
 It is not a substitute for professional cybersecurity tools.
 The simulated phishing URLs on the demo page are for illustration only — do not visit them.
 
