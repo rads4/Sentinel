@@ -257,4 +257,3 @@ The simulated phishing URLs on the demo page are for illustration only — do no
 
 ---
 
-*Built with ❤ for MCA Major Project · 2024*
