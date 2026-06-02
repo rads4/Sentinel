@@ -3,13 +3,13 @@ Explainable AI Based Phishing Website Detection System
 
 A production-grade phishing website detection application built with
 Random Forest, SHAP explainability, and a clean Flask web interface.
-Designed for viva demonstration, GitHub portfolio, and free-tier cloud deployment.
+Designed for free-tier cloud deployment.
 
 ---
 
 ## Live Demo
 
-Live Application:
+Live App Deployment:
 https://web-production-31aa7.up.railway.app
 
 ---
