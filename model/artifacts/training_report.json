@@ -1,0 +1,35 @@
+{
+  "random_forest": {
+    "accuracy": 95.48,
+    "precision": 96.95,
+    "recall": 94.71,
+    "f1": 95.82
+  },
+  "logistic_regression": {
+    "accuracy": 96.2,
+    "precision": 97.07,
+    "recall": 95.95,
+    "f1": 96.51
+  },
+  "paper_results": {
+    "random_forest": {
+      "accuracy": 96.79,
+      "precision": 96.18,
+      "recall": 98.25,
+      "f1": 97.2
+    },
+    "logistic_regression": {
+      "accuracy": 92.36,
+      "precision": 92.76,
+      "recall": 93.86,
+      "f1": 93.31
+    }
+  },
+  "dataset": {
+    "total_samples": 11055,
+    "train_samples": 8844,
+    "test_samples": 2211,
+    "features_used": 16,
+    "features_total_paper": 30
+  }
+}

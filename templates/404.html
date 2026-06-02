@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Page Not Found — PhishGuard{% endblock %}
+{% block content %}
+<section class="section" style="text-align:center;padding:6rem 0">
+  <div class="container">
+    <div style="font-size:5rem;font-weight:700;color:var(--blue);opacity:.15;font-family:var(--font-display)">404</div>
+    <h2 style="margin-top:1rem">Page not found</h2>
+    <p style="color:var(--text-muted);margin:.75rem 0 2rem">The page you're looking for doesn't exist.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary">Go home</a>
+  </div>
+</section>
+{% endblock %}

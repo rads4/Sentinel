@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Analyze URL — Sentinel{% endblock %}
+
+{% block content %}
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <div class="section-tag">URL Analysis</div>
+    <h1 class="page-title">Check any URL for phishing</h1>
+    <p class="page-sub">Enter a web address below. Sentinel extracts structural features, runs the ML model, and generates a full SHAP explanation — instantly.</p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container">
+    <div class="analyze-layout">
+
+      <!-- ── Input card ─────────────────────────────────────────────── -->
+      <div class="card analyze-card">
+        <div class="analyze-card-header">
+          <div class="analyze-card-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="currentColor" stroke-width="1.7"/><path d="M15 15l3 3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="analyze-card-title">Enter a URL</div>
+            <div class="analyze-card-sub">Include http:// or https:// for best results</div>
+          </div>
+        </div>
+
+        <div class="url-input-wrap" id="urlInputWrap">
+          <input
+            type="text"
+            id="urlInput"
+            class="url-input"
+            placeholder="https://example.com"
+            value="{{ prefill }}"
+            autocomplete="off"
+            spellcheck="false"
+          />
+          <button class="url-clear-btn" id="urlClearBtn" title="Clear" style="display:none">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <button class="btn btn-primary btn-lg analyze-btn" id="analyzeBtn">
+          <span class="analyze-btn-text">Analyze URL</span>
+          <span class="analyze-btn-spinner" style="display:none">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="spin"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2" stroke-dasharray="22 22" stroke-linecap="round"/></svg>
+            Analyzing…
+          </span>
+        </button>
+
+        <!-- Error message -->
+        <div class="analyze-error" id="analyzeError" style="display:none"></div>
+      </div>
+
+      <!-- ── Sample URLs ─────────────────────────────────────────────── -->
+      <div class="card samples-card">
+        <div class="samples-title">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M8 2v12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          Sample URLs to try
+        </div>
+        <p class="samples-desc">Click any URL to pre-fill the field, then hit Analyze.</p>
+
+        <div class="samples-group">
+          <div class="samples-group-label samples-group-label--legit">
+            <span class="status-dot status-dot--legit"></span> Legitimate websites
+          </div>
+          <div class="samples-list">
+            {% for s in sample_urls if s.type == 'legitimate' %}
+            <button class="sample-btn sample-btn--legit" data-url="{{ s.url }}">
+              <span class="sample-btn-icon">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+              <span class="sample-btn-label">{{ s.label }}</span>
+              <span class="sample-btn-url">{{ s.url }}</span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="samples-group" style="margin-top:1.25rem">
+          <div class="samples-group-label samples-group-label--phish">
+            <span class="status-dot status-dot--phish"></span> Simulated phishing examples
+          </div>
+          <div class="samples-list">
+            {% for s in sample_urls if s.type == 'phishing' %}
+            <button class="sample-btn sample-btn--phish" data-url="{{ s.url }}">
+              <span class="sample-btn-icon">
+                <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 3v4M6.5 9.5h.01" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+              </span>
+              <span class="sample-btn-label">{{ s.label }}</span>
+              <span class="sample-btn-url">{{ s.url }}</span>
+            </button>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="samples-disclaimer">
+          ⚠ Phishing examples are simulated URLs for demonstration only. Do not visit them.
+        </div>
+      </div>
+
+    </div><!-- /analyze-layout -->
+
+    <!-- ── What we check ──────────────────────────────────────────────── -->
+    <div class="card what-we-check">
+      <div class="wwc-title">What Sentinel checks</div>
+      <div class="wwc-grid">
+        <div class="wwc-item">
+          <div class="wwc-dot wwc-dot--blue"></div>
+          <div>
+            <div class="wwc-item-title">URL Structure</div>
+            <div class="wwc-item-desc">Length, depth, special characters, redirects</div>
+          </div>
+        </div>
+        <div class="wwc-item">
+          <div class="wwc-dot wwc-dot--teal"></div>
+          <div>
+            <div class="wwc-item-title">Domain Analysis</div>
+            <div class="wwc-item-desc">IP address usage, subdomains, hyphens, TLD</div>
+          </div>
+        </div>
+        <div class="wwc-item">
+          <div class="wwc-dot wwc-dot--blue"></div>
+          <div>
+            <div class="wwc-item-title">Security Signals</div>
+            <div class="wwc-item-desc">HTTPS presence, port, shortening services</div>
+          </div>
+        </div>
+        <div class="wwc-item">
+          <div class="wwc-dot wwc-dot--teal"></div>
+          <div>
+            <div class="wwc-item-title">Domain Reputation</div>
+            <div class="wwc-item-desc">DNS record, domain age (when available)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analyze.js') }}"></script>
+{% endblock %}

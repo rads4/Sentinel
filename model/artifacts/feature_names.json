@@ -1,0 +1,18 @@
+[
+  "having_ip_address",
+  "url_length",
+  "shortening_service",
+  "having_at_symbol",
+  "double_slash_redirect",
+  "prefix_suffix_hyphen",
+  "subdomain_depth",
+  "https_present",
+  "https_in_domain",
+  "non_standard_port",
+  "submitting_to_email",
+  "abnormal_url",
+  "url_depth",
+  "suspicious_tld",
+  "dns_record",
+  "domain_age"
+]

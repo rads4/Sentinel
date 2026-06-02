@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+{% block title %}Sentinel — AI-Powered Phishing Detection{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero ───────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg-grid"></div>
+  <div class="container">
+    <div class="hero-badge">
+      <span class="badge-dot"></span>
+      Explainable AI
+    </div>
+    <h1 class="hero-title">
+      Detect Phishing Websites<br/>
+      <em>and understand why</em>
+    </h1>
+    <p class="hero-subtitle">
+      Sentinel uses a Random Forest classifier trained on real phishing data,
+      with SHAP-powered explanations that show exactly which URL signals
+      triggered the decision — in plain language anyone can understand.
+    </p>
+    <div class="hero-actions">
+      <a href="{{ url_for('analyze') }}" class="btn btn-primary btn-lg">
+        Analyze a URL
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="{{ url_for('research') }}" class="btn btn-ghost btn-lg">View Research</a>
+    </div>
+
+    <!-- Inline demo form -->
+    <div class="hero-demo">
+      <div class="hero-demo-label">Try it now</div>
+      <form class="hero-form" id="heroForm">
+        <input
+          type="text"
+          id="heroUrl"
+          class="hero-input"
+          placeholder="https://example.com"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="submit" class="btn btn-primary">Check</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ── Stats strip ────────────────────────────────────────────────────── -->
+<section class="stats-strip">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item">
+        <div class="stat-number">95.5<span>%</span></div>
+        <div class="stat-label">Model Accuracy</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">16</div>
+        <div class="stat-label">URL Features Analyzed</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">11K<span>+</span></div>
+        <div class="stat-label">Training Samples</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <div class="stat-number">SHAP</div>
+        <div class="stat-label">Explainability Method</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Why phishing matters ───────────────────────────────────────────── -->
+<section class="section" id="why">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">The Problem</div>
+      <h2 class="section-title">Why Phishing Detection Matters</h2>
+      <p class="section-sub">
+        Phishing attacks are the most common entry point for cybercriminals —
+        and they are becoming increasingly sophisticated.
+      </p>
+    </div>
+
+    <div class="threat-grid">
+      <div class="threat-card threat-card--red">
+        <div class="threat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="threat-number">3.4B</div>
+        <div class="threat-label">Phishing emails sent daily worldwide</div>
+      </div>
+      <div class="threat-card threat-card--orange">
+        <div class="threat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div class="threat-number">36%</div>
+        <div class="threat-label">Of all data breaches involve phishing</div>
+      </div>
+      <div class="threat-card threat-card--blue">
+        <div class="threat-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="1.8"/><path d="M12 8v4l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </div>
+        <div class="threat-number">$4.9B</div>
+        <div class="threat-label">Global losses to phishing in 2023</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── How it works ───────────────────────────────────────────────────── -->
+<section class="section section--alt" id="how">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Methodology</div>
+      <h2 class="section-title">How Sentinel Works</h2>
+      <p class="section-sub">
+        A four-step pipeline from URL to plain-language explanation.
+      </p>
+    </div>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">01</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 14h20M14 4v20" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="14" cy="14" r="10" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <h3 class="step-title">Feature Extraction</h3>
+        <p class="step-desc">16 structural features are automatically extracted from your URL — no page load required. Includes IP detection, HTTPS status, subdomain depth, TLD reputation, and more.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">02</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="4" width="20" height="20" rx="2" stroke="currentColor" stroke-width="1.8"/><path d="M9 14l3 3 7-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="step-title">ML Prediction</h3>
+        <p class="step-desc">A Random Forest classifier (200 trees, 95.5% accuracy) trained on 11,000+ real phishing and legitimate websites generates a prediction with a calibrated probability score.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">03</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M4 20l6-8 5 4 4-6 5 10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="step-title">SHAP Explainability</h3>
+        <p class="step-desc">SHapley Additive exPlanations (SHAP) calculate the exact contribution of each feature to the prediction. TreeExplainer provides provably exact values — not approximations.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">04</div>
+        <div class="step-icon">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M8 12h12M8 16h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="4" y="6" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/></svg>
+        </div>
+        <h3 class="step-title">Plain-Language Report</h3>
+        <p class="step-desc">Technical SHAP values are translated into human-readable explanations. Any user — not just security experts — can understand exactly why a URL was flagged.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── XAI explainer ──────────────────────────────────────────────────── -->
+<section class="section" id="xai">
+  <div class="container">
+    <div class="xai-split">
+      <div class="xai-text">
+        <div class="section-tag">Explainable AI</div>
+        <h2 class="section-title">Transparency over black boxes</h2>
+        <p>
+          Standard machine learning models are opaque — they produce a verdict
+          without justification. In cybersecurity, trust requires explanation.
+        </p>
+        <p>
+          Sentinel uses <strong>SHAP (SHapley Additive exPlanations)</strong>,
+          a game-theory-based method that assigns each feature a contribution
+          score. You can see exactly which URL properties pushed the model
+          toward "phishing" and which pushed toward "legitimate."
+        </p>
+        <p>
+          This is not just academically interesting — it lets security analysts
+          verify decisions, and lets ordinary users understand why a link is unsafe.
+        </p>
+        <a href="{{ url_for('analyze') }}" class="btn btn-primary" style="margin-top:1.5rem">
+          See it in action →
+        </a>
+      </div>
+      <div class="xai-visual">
+        <div class="xai-card">
+          <div class="xai-card-header">SHAP Feature Contributions</div>
+          <div class="xai-bar-list">
+            <div class="xai-bar-row">
+              <span class="xai-bar-label">HTTPS protocol</span>
+              <div class="xai-bar-track">
+                <div class="xai-bar xai-bar--legit" style="width:72%">+0.38</div>
+              </div>
+            </div>
+            <div class="xai-bar-row">
+              <span class="xai-bar-label">URL length</span>
+              <div class="xai-bar-track">
+                <div class="xai-bar xai-bar--phish" style="width:58%">−0.29</div>
+              </div>
+            </div>
+            <div class="xai-bar-row">
+              <span class="xai-bar-label">Subdomain depth</span>
+              <div class="xai-bar-track">
+                <div class="xai-bar xai-bar--phish" style="width:44%">−0.22</div>
+              </div>
+            </div>
+            <div class="xai-bar-row">
+              <span class="xai-bar-label">DNS record</span>
+              <div class="xai-bar-track">
+                <div class="xai-bar xai-bar--legit" style="width:32%">+0.16</div>
+              </div>
+            </div>
+            <div class="xai-bar-row">
+              <span class="xai-bar-label">Prefix/suffix hyphen</span>
+              <div class="xai-bar-track">
+                <div class="xai-bar xai-bar--phish" style="width:20%">−0.10</div>
+              </div>
+            </div>
+          </div>
+          <div class="xai-verdict xai-verdict--phish">⚠ Likely Phishing — 84% confidence</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ────────────────────────────────────────────────────────────── -->
+<section class="cta-section">
+  <div class="container">
+    <div class="cta-card">
+      <div class="cta-bg-orb cta-bg-orb--1"></div>
+      <div class="cta-bg-orb cta-bg-orb--2"></div>
+      <h2 class="cta-title">Ready to analyze a URL?</h2>
+      <p class="cta-sub">Paste any web address and get a prediction with full explainability in seconds.</p>
+      <a href="{{ url_for('analyze') }}" class="btn btn-white btn-lg">
+        Start analyzing
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8H13M9 4L13 8L9 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/analyze.js') }}"></script>
+<script>
+// Hero inline form → redirect to analyze with prefill
+document.getElementById('heroForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const url = document.getElementById('heroUrl').value.trim();
+  if (url) window.location.href = '/analyze?url=' + encodeURIComponent(url);
+});
+</script>
+{% endblock %}

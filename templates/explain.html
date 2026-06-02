@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Explainability Dashboard - Sentinel{% endblock %}
+
+{% block content %}
+
+<section class="page-hero page-hero--sm">
+  <div class="container">
+    <div class="breadcrumb">
+      <a href="{{ url_for('result') }}">← Back to Result</a>
+    </div>
+    <h1 class="page-title">Explainability Dashboard</h1>
+    <p class="page-sub">SHAP-powered feature attribution — see exactly why the model made its decision.</p>
+  </div>
+</section>
+
+<section class="section section--tight">
+  <div class="container">
+
+    <!-- No data state -->
+    <div class="result-empty" id="explainEmpty" style="display:none">
+      <p>No analysis data found. <a href="{{ url_for('analyze') }}">Analyze a URL first →</a></p>
+    </div>
+
+    <div id="explainMain" style="display:none">
+
+      <!-- ── Summary banner ──────────────────────────────────────── -->
+      <div class="explain-banner" id="explainBanner">
+        <div class="explain-banner-left">
+          <div class="explain-banner-verdict" id="bannerVerdict"></div>
+          <div class="explain-banner-url" id="bannerUrl"></div>
+        </div>
+        <div class="explain-banner-right" id="bannerConf"></div>
+      </div>
+
+      <!-- ── Plain language explanations ───────────────────────── -->
+      <div class="card" style="margin-bottom:2rem">
+        <div class="card-header">
+          <div class="card-header-title">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 6h12M3 10h8M3 14h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Why did the model predict this?
+          </div>
+          <div class="card-header-sub">Top contributing features ranked by SHAP impact</div>
+        </div>
+
+        <div class="plain-explanations" id="plainExplanations"></div>
+      </div>
+
+      <!-- ── SHAP waterfall chart ───────────────────────────────── -->
+      <div class="card" style="margin-bottom:2rem">
+        <div class="card-header">
+          <div class="card-header-title">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 14l4-5 4 3 3-5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            SHAP Waterfall — Feature Contributions
+          </div>
+          <div class="card-header-sub">
+            How each feature shifts the prediction from the base rate.
+            Red = pushes toward phishing · Blue = pushes toward legitimate.
+          </div>
+        </div>
+        <div id="shapWaterfall" class="plotly-chart"></div>
+        <div class="chart-note">
+          The base value (left) represents the model's average prediction. Each feature contribution
+          moves the output left (legitimate) or right (phishing) until reaching the final prediction probability.
+        </div>
+      </div>
+
+      <!-- ── SHAP bar chart ─────────────────────────────────────── -->
+      <div class="chart-row">
+        <div class="card chart-col">
+          <div class="card-header">
+            <div class="card-header-title">Feature Impact (This URL)</div>
+            <div class="card-header-sub">SHAP value magnitude per feature</div>
+          </div>
+          <div id="shapBar" class="plotly-chart plotly-chart--sm"></div>
+        </div>
+        <div class="card chart-col">
+          <div class="card-header">
+            <div class="card-header-title">Global Feature Importance</div>
+            <div class="card-header-sub">Trained model — average importance across all data</div>
+          </div>
+          <div id="globalImportance" class="plotly-chart plotly-chart--sm"></div>
+        </div>
+      </div>
+
+      <!-- ── SHAP explanation guide ─────────────────────────────── -->
+      <div class="card shap-guide">
+        <div class="shap-guide-title">Understanding SHAP Values</div>
+        <div class="shap-guide-grid">
+          <div class="shap-guide-item">
+            <div class="shap-guide-chip shap-guide-chip--red">Positive SHAP</div>
+            <p>A positive SHAP value means this feature pushed the model's output <strong>toward phishing</strong>. The larger the value, the stronger the push.</p>
+          </div>
+          <div class="shap-guide-item">
+            <div class="shap-guide-chip shap-guide-chip--blue">Negative SHAP</div>
+            <p>A negative SHAP value means this feature pushed the model's output <strong>toward legitimate</strong>. It is evidence against phishing.</p>
+          </div>
+          <div class="shap-guide-item">
+            <div class="shap-guide-chip shap-guide-chip--gray">Near Zero</div>
+            <p>A SHAP value near zero means this feature had <strong>little influence</strong> on the prediction for this particular URL.</p>
+          </div>
+          <div class="shap-guide-item">
+            <div class="shap-guide-chip shap-guide-chip--teal">Base Value</div>
+            <p>The base value is the model's <strong>average prediction</strong> across the training dataset — the starting point before any features are considered.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Actions ───────────────────────────────────────────── -->
+      <div class="explain-actions">
+        <a href="{{ url_for('analyze') }}" class="btn btn-primary">Analyze Another URL</a>
+        <a href="{{ url_for('research') }}" class="btn btn-ghost">View Research Insights</a>
+      </div>
+
+    </div><!-- /explainMain -->
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const raw = sessionStorage.getItem('phishguard_result');
+  if (!raw) {
+    document.getElementById('explainEmpty').style.display = 'flex';
+    return;
+  }
+
+  let data;
+  try { data = JSON.parse(raw); } catch(e) {
+    document.getElementById('explainEmpty').style.display = 'flex';
+    return;
+  }
+
+  document.getElementById('explainMain').style.display = 'block';
+  renderExplain(data);
+});
+
+function renderExplain(data) {
+  const isPhish = data.prediction === 'Phishing';
+
+  // Banner
+  const banner = document.getElementById('explainBanner');
+  banner.classList.add(isPhish ? 'explain-banner--phish' : 'explain-banner--legit');
+  document.getElementById('bannerVerdict').textContent =
+    isPhish ? '⚠ Phishing Website Detected' : '✓ Website Appears Legitimate';
+  document.getElementById('bannerUrl').textContent = data.url;
+  document.getElementById('bannerConf').innerHTML =
+    `<div class="banner-conf-label">Confidence</div><div class="banner-conf-val">${data.confidence}%</div>`;
+
+  // Plain language explanations
+  const container = document.getElementById('plainExplanations');
+  data.top_explanations.forEach((exp, i) => {
+    const isPhishSig = exp.direction === 'phishing';
+    const div = document.createElement('div');
+    div.className = `plain-exp-item plain-exp-item--${isPhishSig ? 'phish' : 'legit'}`;
+    div.innerHTML = `
+      <div class="plain-exp-rank">${i + 1}</div>
+      <div class="plain-exp-icon">${isPhishSig
+        ? `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 4v5M8 11h.01M2 13h12L8 3 2 13z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+        : `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+      }</div>
+      <div class="plain-exp-body">
+        <div class="plain-exp-feature">${formatFeatureName(exp.feature)}</div>
+        <div class="plain-exp-text">${exp.plain_text}</div>
+      </div>
+      <div class="plain-exp-shap">
+        <div class="plain-exp-shap-val ${isPhishSig ? 'shap-val--phish' : 'shap-val--legit'}">
+          ${exp.shap_value > 0 ? '+' : ''}${exp.shap_value.toFixed(3)}
+        </div>
+        <div class="plain-exp-shap-label">SHAP</div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  // Charts
+  renderShapWaterfall(data);
+  renderShapBar(data);
+  renderGlobalImportance(data);
+}
+
+function formatFeatureName(name) {
+  const map = {
+    having_ip_address: 'IP Address in URL',
+    url_length: 'URL Length',
+    shortening_service: 'URL Shortening Service',
+    having_at_symbol: '@ Symbol in URL',
+    double_slash_redirect: 'Double Slash Redirect',
+    prefix_suffix_hyphen: 'Hyphen in Domain Name',
+    subdomain_depth: 'Subdomain Depth',
+    https_present: 'HTTPS Protocol',
+    https_in_domain: 'HTTPS Token in Domain',
+    non_standard_port: 'Non-Standard Port',
+    submitting_to_email: 'Submits to Email',
+    abnormal_url: 'Abnormal URL Structure',
+    url_depth: 'URL Path Depth',
+    suspicious_tld: 'Suspicious TLD',
+    dns_record: 'DNS Record',
+    domain_age: 'Domain Age',
+  };
+  return map[name] || name;
+}
+</script>
+{% endblock %}
